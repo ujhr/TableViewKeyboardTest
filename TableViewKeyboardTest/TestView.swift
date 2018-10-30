@@ -8,6 +8,8 @@
 
 import UIKit
 
+// Test of commit
+
 class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, TestCellDelegate {
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
