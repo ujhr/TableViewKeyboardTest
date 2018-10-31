@@ -8,8 +8,6 @@
 
 import UIKit
 
-// Test of commit
-
 class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, TestCellDelegate {
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -45,8 +43,8 @@ class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, Te
   // 通知登録処理
   func registerNotification() -> () {
     let center: NotificationCenter = NotificationCenter.default
-    center.addObserver(self, selector: Selector(("keyboardWillShow:")), name: UIResponder.keyboardWillShowNotification, object: nil)
-    center.addObserver(self, selector: Selector(("keyboardWillHide:")), name: UIResponder.keyboardWillHideNotification, object: nil)
+    center.addObserver(TestCell(), selector: Selector(("keyboardWillShow:")), name: UIResponder.keyboardWillShowNotification, object: nil)
+    center.addObserver(TestCell(), selector: Selector(("keyboardWillHide:")), name: UIResponder.keyboardWillHideNotification, object: nil)
   }
   
   // 通知登録解除処理
@@ -109,9 +107,6 @@ class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, Te
   func textFieldDidBeginEditing(cell: TestCell, value: NSString) -> () {
     let path = TestTableView.indexPathForRow(at: cell.convert(cell.bounds.origin, to: TestTableView))
     editingPath = path as! NSIndexPath
-  
-  
-  
   
   
 }
