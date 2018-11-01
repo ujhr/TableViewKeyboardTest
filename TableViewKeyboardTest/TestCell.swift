@@ -24,6 +24,11 @@ class TestCell: UITableViewCell, UITextFieldDelegate {
     TestTextField.delegate = self
   }
   
+  internal func textFieldDidBeginEditing(textField: UITextField) {
+    self.delegate.textFieldDidBeginEditing(cell: self, value: TestTextField.text! as NSString)
+    print("success")
+  }
+  
   func textFieldShouldReturn(_ TextField: UITextField) -> Bool {
     
     TestTextField.resignFirstResponder()
@@ -31,8 +36,5 @@ class TestCell: UITableViewCell, UITextFieldDelegate {
     return true
   }
   
-  internal func textFieldDidBeginEditing(textField: UITextField) {
-    self.delegate.textFieldDidBeginEditing(cell: self, value: textField.text! as NSString)
-  }
   
 }
