@@ -25,9 +25,10 @@ class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, Te
     return cell
   }
   
+  //func textFieldDidBeginEditing(cell: TestCell, value: NSString) -> () {
   func textFieldDidBeginEditing(cell: TestCell, value: NSString) -> () {
     let path = TestTableView.indexPathForRow(at: cell.convert(cell.bounds.origin, to: TestTableView))
-    editingPath = path as! NSIndexPath
+    editingPath = path as NSIndexPath?
     print("editingPath", editingPath)
   }
   

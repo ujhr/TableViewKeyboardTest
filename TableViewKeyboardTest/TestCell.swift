@@ -10,12 +10,18 @@ import UIKit
 
 protocol TestCellDelegate {
   // 追加
+  //func textFieldDidBeginEditing(cell: TestCell, value: NSString) -> ()
   func textFieldDidBeginEditing(cell: TestCell, value: NSString) -> ()
 }
 
 class TestCell: UITableViewCell, UITextFieldDelegate {
   
-  var delegate: TestCellDelegate! = nil
+  var delegate: TestCellDelegate? = nil
+  
+  //　オリジナルで追加　必要ない？
+  //func textFieldDidBegin() {
+  //  return delegate.textFieldDidBeginEditing(cell: self, value: TestTextField.text! as NSString)
+  //}
   
   @IBOutlet weak var TestTextField: UITextField!
   
@@ -24,8 +30,11 @@ class TestCell: UITableViewCell, UITextFieldDelegate {
     TestTextField.delegate = self
   }
   
-  internal func textFieldDidBeginEditing(textField: UITextField) {
-    self.delegate.textFieldDidBeginEditing(cell: self, value: TestTextField.text! as NSString)
+  //(TextField: UITextField) から (_ TextField: UITextField)にしたら反応した。なぜ？同名の関数と区別できたから？
+  internal func textFieldDidBeginEditing(_ textField: UITextField) {
+    self.delegate?.textFieldDidBeginEditing(cell: self, value: TestTextField.text! as NSString)
+    //self.delegate?.textFieldDidBeginEditing(cell: self)
+    //textFieldDidBegin()
     print("success")
   }
   
