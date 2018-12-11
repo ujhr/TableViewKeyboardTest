@@ -9,8 +9,6 @@
 import UIKit
 
 protocol TestCellDelegate {
-  // 追加
-  //func textFieldDidBeginEditing(cell: TestCell, value: NSString) -> ()
   func textFieldDidBeginEditing(cell: TestCell, value: NSString) -> ()
 }
 
@@ -28,6 +26,8 @@ class TestCell: UITableViewCell, UITextFieldDelegate {
   override func awakeFromNib() {
     super.awakeFromNib()
     TestTextField.delegate = self
+    
+    self.delegate = TestView() as! TestCellDelegate
   }
   
   //(TextField: UITextField) から (_ TextField: UITextField)にしたら反応した。なぜ？同名の関数と区別できたから？

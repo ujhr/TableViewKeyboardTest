@@ -10,6 +10,8 @@ import UIKit
 
 class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, TestCellDelegate {
   
+  @IBOutlet weak var TestTableView: UITableView!
+  
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     
     return 15
@@ -18,34 +20,26 @@ class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, Te
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "TestCell", for: indexPath) as! TestCell
     
-    //cell.textLabel?.text = "カテゴリーを追加する"
-    
-    //cell.imageView!.image = UIImage(named: "PlusButton4")
-    
     return cell
   }
   
-  //func textFieldDidBeginEditing(cell: TestCell, value: NSString) -> () {
-  func textFieldDidBeginEditing(cell: TestCell, value: NSString) -> () {
-    let path = TestTableView.indexPathForRow(at: cell.convert(cell.bounds.origin, to: TestTableView))
-    editingPath = path as NSIndexPath?
-    print("editingPath", editingPath)
+  func tableView(_ tableView: UITableView,
+                 didSelectRowAt indexPath: IndexPath){
+    print("tapped", indexPath)
   }
   
-  @IBOutlet weak var TestTableView: UITableView!
-  
-  var lastKeyboardFrame: CGRect = CGRect.zero
-  var editingPath: NSIndexPath!
+  func tableView(_ tableView: UITableView,
+                 didHighlightRowAt indexPath: IndexPath) {
+    print("tapped", indexPath)
+    
+  }
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    // Notificationでキーボードの値を監視して、キーボードのFrameを取得
-    NotificationCenter.default.addObserver(self,selector: #selector(TestView.keyboardWillShow(notification:)),
-                                           name: UIResponder.keyboardWillChangeFrameNotification,
-                                           object: nil)
-    NotificationCenter.default.addObserver(self,selector: #selector(TestView.keyboardWillHide(notification:)),
-                                           name: UIResponder.keyboardWillHideNotification,
-                                           object: nil)
+    
+    registerNotification()
+    
+    self.TestTableView.reloadData()
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -53,31 +47,36 @@ class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, Te
     unregisterNotification()
   }
   
-  // MARK: - Keyboard
-  // 通知登録処理
   func registerNotification() -> () {
     let center: NotificationCenter = NotificationCenter.default
-    center.addObserver(TestView(), selector: #selector(self.keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-    center.addObserver(TestView(), selector: Selector(("keyboardWillHide:")), name: UIResponder.keyboardWillHideNotification, object: nil)
+    center.addObserver(self, selector: #selector(self.keyboardWillShow(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+    center.addObserver(self, selector: #selector(self.keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
   }
-  //#selector(self.keyboardWillShow(notification:))
-  // 通知登録解除処理
+  
   func unregisterNotification() -> () {
     let center: NotificationCenter = NotificationCenter.default
     center.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
     center.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
   }
   
-  // Keyboard表示前処理
   @objc func keyboardWillShow(notification: NSNotification) -> () {
-    print("a")
     scrollTableCell(notification: notification, showKeyboard: true)
   }
   
-  // Keyboard非表示前処理
   @objc func keyboardWillHide(notification: NSNotification) -> () {
     scrollTableCell(notification: notification, showKeyboard: false)
-    print("b")
+  }
+  
+  var lastKeyboardFrame: CGRect = CGRect.zero
+  var editingPath: NSIndexPath!
+  
+  // 選択したセルのindexPathを取得する
+  func textFieldDidBeginEditing(cell: TestCell, value: NSString) -> () {
+    print(cell.convert(cell.bounds.origin, to: TestTableView))
+    print("TestTableView", TestTableView)
+    let path = TestTableView?.indexPathForRow(at: cell.convert(cell.bounds.origin, to: TestTableView))
+    editingPath = path as NSIndexPath?
+    print("editingPath1", editingPath)
   }
   
   // TableViewCellをKeyboardの上までスクロールする処理
@@ -98,12 +97,12 @@ class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, Te
       TestTableView.contentSize = newSize
       lastKeyboardFrame = keyboardFrame
       
-      // keyboardのtopを取得
       let keyboardTop: CGFloat = UIScreen.main.bounds.size.height - keyboardFrame.size.height;
       
       // 編集中セルのbottomを取得
-      print(editingPath)
+      print("editingPath", editingPath)
       let cell: TestCell = TestTableView.cellForRow(at: NSIndexPath(row: editingPath.row, section: editingPath.section) as IndexPath) as! TestCell
+      //let cell: TestCell = TestTableView.cellForRow(at: NSIndexPath(row: 12, section: 0) as IndexPath) as! TestCell
       let cellBottom: CGFloat
       cellBottom = cell.frame.origin.y - TestTableView.contentOffset.y + cell.frame.size.height;
       
@@ -118,6 +117,7 @@ class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, Te
       let newSize: CGSize = CGSize(width: TestTableView.contentSize.width, height: TestTableView.contentSize.height - lastKeyboardFrame.size.height)
       TestTableView.contentSize = newSize
       TestTableView.scrollToRow(at: editingPath as IndexPath, at: UITableView.ScrollPosition.none, animated: true)
+      //TestTableView.scrollToRow(at: NSIndexPath(row: 12, section: 0) as IndexPath, at: UITableView.ScrollPosition.none, animated: true)
       lastKeyboardFrame = CGRect.zero;
     }
   }
