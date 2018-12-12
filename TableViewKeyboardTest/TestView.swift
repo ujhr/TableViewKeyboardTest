@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, TestCellDelegate {
+class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource {
   
   @IBOutlet weak var TestTableView: UITableView!
   
@@ -20,18 +20,9 @@ class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, Te
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "TestCell", for: indexPath) as! TestCell
     
-    return cell
-  }
-  
-  func tableView(_ tableView: UITableView,
-                 didSelectRowAt indexPath: IndexPath){
-    print("tapped", indexPath)
-  }
-  
-  func tableView(_ tableView: UITableView,
-                 didHighlightRowAt indexPath: IndexPath) {
-    print("tapped", indexPath)
+    cell.TestTextField.tag = indexPath.row
     
+    return cell
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -70,17 +61,13 @@ class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, Te
   var lastKeyboardFrame: CGRect = CGRect.zero
   var editingPath: NSIndexPath!
   
-  // 選択したセルのindexPathを取得する
-  func textFieldDidBeginEditing(cell: TestCell, value: NSString) -> () {
-    print(cell.convert(cell.bounds.origin, to: TestTableView))
-    print("TestTableView", TestTableView)
-    let path = TestTableView?.indexPathForRow(at: cell.convert(cell.bounds.origin, to: TestTableView))
-    editingPath = path as NSIndexPath?
-    print("editingPath1", editingPath)
-  }
-  
   // TableViewCellをKeyboardの上までスクロールする処理
   func scrollTableCell(notification: NSNotification, showKeyboard: Bool) -> () {
+    
+    // 選択中のセルのindexPath取得
+    var row = selectedIndexPath
+    var indexPath = NSIndexPath(row: row, section: 0)
+    editingPath = indexPath
     
     if showKeyboard {
       // keyboardのサイズを取得
@@ -100,7 +87,6 @@ class TestView: UIViewController, UITableViewDelegate, UITableViewDataSource, Te
       let keyboardTop: CGFloat = UIScreen.main.bounds.size.height - keyboardFrame.size.height;
       
       // 編集中セルのbottomを取得
-      print("editingPath", editingPath)
       let cell: TestCell = TestTableView.cellForRow(at: NSIndexPath(row: editingPath.row, section: editingPath.section) as IndexPath) as! TestCell
       //let cell: TestCell = TestTableView.cellForRow(at: NSIndexPath(row: 12, section: 0) as IndexPath) as! TestCell
       let cellBottom: CGFloat
